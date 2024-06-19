@@ -8,7 +8,7 @@ STORAGES_FILE = docker-compose/storages.yaml
 
 .PHONY: dev-app
 dev-app:
-	${DC} -f ${APP_FILE} ${DEV_ENV} up --build -d ${DEV_ENV}
+	${DC} -f ${APP_FILE} ${DEV_ENV} up --build -d
 
 .PHONY: app
 app:
@@ -34,6 +34,10 @@ down-app:
 .PHONY: down-storages
 down-storages:
 	${DC} -f ${STORAGES_FILE} ${DEV_ENV} down
+
+.PHONY: down-storages
+down-storages-v:
+	${DC} -f ${STORAGES_FILE} ${DEV_ENV} down -v
 
 .PHONY: down-all
 down-all:

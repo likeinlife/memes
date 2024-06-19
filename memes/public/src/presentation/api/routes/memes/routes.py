@@ -1,11 +1,13 @@
 import typing as tp
 import uuid
+from functools import partial
 
 from dishka import Container
-from fastapi import APIRouter, Depends, File, HTTPException, Path, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Path, Response, UploadFile, status
 
 from container import get_container
-from domain.protocols.errors import MemeNotFoundError
+from domain.protocols.errors import C3GateWayError, MemeNotFoundError
+from logic.interactors.errors import InvalidImageExtensionError
 from logic.interactors.memes import MemesInteractor
 
 from . import mapper, schemas
@@ -20,7 +22,8 @@ async def get_memes(
 ) -> schemas.MemeListResponse:
     interactor = container.get(MemesInteractor)
     memes = await interactor.fetch_list(limit=paginator.limit, offset=paginator.offset)
-    return mapper.MemesDomainSchemasMapper.to_response_list(memes)
+    image_getter = partial(router.url_path_for, "image")
+    return mapper.MemesDomainSchemasMapper.to_response_list(memes, image_getter)
 
 
 @router.get("/{id}/")
@@ -33,17 +36,25 @@ async def get_meme(
         memes = await interactor.fetch_by_id(meme_id=id)
     except MemeNotFoundError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.message)
-    return mapper.MemesDomainSchemasMapper.to_response(memes)
+    image_getter = partial(router.url_path_for, "image")
+    return mapper.MemesDomainSchemasMapper.to_response(memes, image_getter)
 
 
 @router.post("/")
 async def add(
     meme: tp.Annotated[schemas.MemeCreateRequest, Depends()],
-    image: tp.Annotated[bytes, File()],
+    image: UploadFile,
     container: tp.Annotated[Container, Depends(get_container)],
 ) -> schemas.MemeCreateResponse:
     interactor = container.get(MemesInteractor)
-    created = await interactor.add(text=meme.text, image=image, file_name=meme.image_name)
+    if not image.filename:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Image name is required")
+    try:
+        created = await interactor.add(text=meme.text, image=await image.read(), file_name=image.filename)
+    except InvalidImageExtensionError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=e.message)
+    except C3GateWayError as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=e.message)
     return schemas.MemeCreateResponse(meme_id=created)
 
 
@@ -51,17 +62,29 @@ async def add(
 async def update(
     id: tp.Annotated[uuid.UUID, Path()],  # noqa: A002
     meme: tp.Annotated[schemas.MemeUpdateRequest, Depends()],
-    image: tp.Annotated[bytes, File()],
+    image: UploadFile,
     container: tp.Annotated[Container, Depends(get_container)],
 ) -> schemas.MemeUpdateResponse:
     interactor = container.get(MemesInteractor)
+    if not image.filename:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Image name is required")
     try:
-        created = await interactor.update(meme_id=id, text=meme.text, image=image, file_name=meme.image_name)
+        created = await interactor.update(
+            meme_id=id,
+            text=meme.text,
+            image=await image.read(),
+            file_name=image.filename,
+        )
     except MemeNotFoundError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.message)
+    except InvalidImageExtensionError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=e.message)
+    except C3GateWayError as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=e.message)
+
     return schemas.MemeUpdateResponse(
         id=created.id,
-        image_url=created.image_url.as_generic_type(),
+        image_url=created.image_name,
         text=created.text.as_generic_type(),
         created_at=created.created_at,
     )
@@ -78,3 +101,11 @@ async def delete(
     except MemeNotFoundError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.message)
     return Response(status.HTTP_204_NO_CONTENT)
+
+
+@router.get("/image/{image_name}/")
+async def image(
+    image_name: tp.Annotated[str, Path()],  # noqa: ARG001
+    container: tp.Annotated[Container, Depends(get_container)],  # noqa: ARG001
+) -> Response:
+    return Response(content="Not implemented", status_code=status.HTTP_501_NOT_IMPLEMENTED)

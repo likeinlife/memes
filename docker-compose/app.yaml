@@ -5,8 +5,6 @@ services:
       - "${PUBLIC_PORT}:8000"
     volumes:
       - ../memes/public/src:/opt/app
-    networks:
-      - backend
     environment:
       DB_USER: ${DB_USER:?}
       DB_PASSWORD: ${DB_PASSWORD:?}
@@ -17,11 +15,13 @@ services:
       APP_NAME: ${APP_NAME:?}
       APP_VERSION: ${APP_VERSION:?}
       APP_DEBUG: ${APP_DEBUG:?}
+    networks:
+      - backend
 
   gateway:
     build: ../memes/gateway
-    ports:
-      - "${GATEWAY_PORT}:8000"
+    expose:
+      - "8000"
     volumes:
       - ../memes/gateway/src:/opt/app
     environment:

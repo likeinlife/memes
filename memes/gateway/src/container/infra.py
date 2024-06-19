@@ -26,5 +26,4 @@ class InfraProvider(Provider):
         return MinioC3(
             minio_client,
             settings.c3.bucket_name,
-            settings.c3.encode_secret_key,
         )

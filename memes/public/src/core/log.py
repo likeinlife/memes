@@ -70,5 +70,6 @@ def _get_logging_settings(level: str, json_format: bool) -> dict[str, tp.Any]:
             "jaeger": {"level": logging.ERROR},
             "uvicorn.access": {"level": logging.ERROR},
             "uvicorn.error": {"level": logging.ERROR},
+            "httpx": {"level": logging.ERROR},
         },
     }

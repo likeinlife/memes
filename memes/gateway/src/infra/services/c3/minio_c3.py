@@ -11,7 +11,6 @@ from domain.protocols.c3 import IC3Service
 class MinioC3(IC3Service):
     client: Minio
     bucket_name: str
-    encode_secret_key: bytes
     _logger = structlog.get_logger()
 
     def __post_init__(self) -> None:

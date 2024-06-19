@@ -17,5 +17,9 @@ class UpdateMemeUseCase(IUseCase[Meme]):
     c3_service: IC3GateWay
 
     async def __call__(self) -> Meme:
-        image_url = await self.c3_service.upload_image(self.image, self.file_name)
-        return await self.meme_repository.update(meme_id=self.meme_id, image_url=image_url, text=self.text)
+        await self.c3_service.upload_image(self.image, self.file_name)
+        return await self.meme_repository.update(
+            meme_id=self.meme_id,
+            image_name=self.file_name,
+            text=self.text,
+        )

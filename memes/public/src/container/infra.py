@@ -5,7 +5,7 @@ from core.settings import settings
 from domain.protocols.c3_gateway import IC3GateWay
 from infra.db.base import create_async_engine, create_session_maker
 from infra.db.uow import UnitOfWork
-from infra.services.c3.mock import MockC3Gateway
+from infra.services.c3.http_service import HTTPC3Gateway
 
 
 class InfraProvider(Provider):
@@ -25,4 +25,4 @@ class InfraProvider(Provider):
 
     @provide
     def _c3(self) -> IC3GateWay:
-        return MockC3Gateway()
+        return HTTPC3Gateway(settings.c3.upload_url)

@@ -9,7 +9,7 @@ from domain.protocols.c3 import IC3Service
 router = APIRouter()
 
 
-@router.post("/{file_name}/")
+@router.post("/")
 async def upload(
     file: UploadFile,
 ) -> None:

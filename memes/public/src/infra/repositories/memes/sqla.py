@@ -33,12 +33,12 @@ class SQLAMemeRepository(IMemeRepository):
         await self.session.refresh(orm)
         return orm.id
 
-    async def update(self, meme_id: uuid.UUID, image_url: str, text: str) -> Meme:
+    async def update(self, meme_id: uuid.UUID, image_name: str, text: str) -> Meme:
         query = sa.select(MemeORM).where(MemeORM.id == meme_id)
         found_meme = (await self.session.execute(query)).scalar_one_or_none()
         if not found_meme:
             raise MemeNotFoundError(meme_id=meme_id)
-        found_meme.image_url = image_url
+        found_meme.image_name = image_name
         found_meme.text = text
         await self.session.flush()
         await self.session.refresh(found_meme)

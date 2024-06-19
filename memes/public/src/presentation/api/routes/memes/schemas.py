@@ -13,7 +13,6 @@ class Paginator(BaseModel):
 
 class PutMemeRequest(BaseModel):
     text: str
-    image_name: str
 
 
 class MemeCreateRequest(PutMemeRequest):

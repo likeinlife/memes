@@ -9,13 +9,17 @@ from infra.db.uow import UnitOfWork
 from infra.repositories.memes.sqla import SQLAMemeRepository
 from logic.usecases import memes
 
+from .errors import InvalidImageExtensionError
+
 
 @dataclass(frozen=True, eq=False, slots=True)
 class MemesInteractor:
     uow: UnitOfWork
     c3_gateway: IC3GateWay
+    _allowed_extensions: tp.ClassVar[tuple[str, ...]] = ("jpg", "jpeg", "png")
 
     async def add(self, text: str, image: bytes, file_name: str) -> uuid.UUID:
+        self._check_image_extension(file_name)
         async with self._get_message_repo() as repository:
             return await memes.AddMemeUseCase(
                 text=text,
@@ -48,6 +52,7 @@ class MemesInteractor:
             )()
 
     async def update(self, meme_id: uuid.UUID, text: str, image: bytes, file_name: str) -> Meme:
+        self._check_image_extension(file_name)
         async with self._get_message_repo() as repository:
             return await memes.UpdateMemeUseCase(
                 meme_id=meme_id,
@@ -57,6 +62,11 @@ class MemesInteractor:
                 meme_repository=repository,
                 c3_service=self.c3_gateway,
             )()
+
+    def _check_image_extension(self, file_name: str) -> None:
+        extension = file_name.lower().rsplit(".")[-1]
+        if extension not in self._allowed_extensions:
+            raise InvalidImageExtensionError(image_name=file_name)
 
     @asynccontextmanager
     async def _get_message_repo(self) -> tp.AsyncIterator[SQLAMemeRepository]:

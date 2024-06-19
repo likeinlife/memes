@@ -1,33 +1,29 @@
 from dataclasses import dataclass
 
 import httpx
-import pydantic
+import structlog
 
 from domain.protocols.c3_gateway import IC3GateWay
-from domain.protocols.errors import C3GateWayError
 
-
-class C3GatewayRequest(pydantic.BaseModel):
-    filename: str
-
-
-class C3GatewayResponse(pydantic.BaseModel):
-    filename: str
-    url: str
+from .errors import C3ImageUploadError
 
 
 @dataclass(frozen=True, slots=True)
 class HTTPC3Gateway(IC3GateWay):
     upload_image_url: str
+    _logger = structlog.get_logger()
 
-    async def upload_image(self, image: bytes, filename: str) -> str:
-        request = C3GatewayRequest(filename=filename)
+    async def upload_image(self, image: bytes, filename: str) -> None:
         async with httpx.AsyncClient() as client:
             response = await client.post(
                 self.upload_image_url,
-                files={"file": image},
-                data=request.model_dump(mode="json"),
+                files={"file": (filename, image)},
             )
             if not response.is_success:
-                raise C3GateWayError
-            return pydantic.TypeAdapter(C3GatewayResponse).validate_python(response.json()).url
+                self._logger.error(
+                    "Error uploading image",
+                    filename=filename,
+                    status_code=response.status_code,
+                    content=response.content,
+                )
+                raise C3ImageUploadError(filename)

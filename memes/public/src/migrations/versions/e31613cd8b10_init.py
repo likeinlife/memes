@@ -23,7 +23,7 @@ def upgrade() -> None:
     op.create_table('meme',
     sa.Column('id', sa.Uuid(), nullable=False),
     sa.Column('text', sa.String(), nullable=False),
-    sa.Column('image_url', sa.String(), nullable=False),
+    sa.Column('image_name', sa.String(), nullable=False),
     sa.Column('deleted', sa.Boolean(), nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.PrimaryKeyConstraint('id')
