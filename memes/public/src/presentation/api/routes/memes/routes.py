@@ -8,8 +8,8 @@ from fastapi import APIRouter, Depends, HTTPException, Path, Response, UploadFil
 from container import get_container
 from domain.protocols.c3_gateway import IC3GateWay
 from domain.protocols.errors import C3GateWayError, MemeNotFoundError
+from domain.protocols.memes_interactor import IMemesInteractor
 from logic.interactors.errors import InvalidImageExtensionError
-from logic.interactors.memes import MemesInteractor
 
 from . import mapper, schemas
 
@@ -21,7 +21,7 @@ async def get_memes(
     paginator: tp.Annotated[schemas.Paginator, Depends()],
     container: tp.Annotated[Container, Depends(get_container)],
 ) -> schemas.MemeListResponse:
-    interactor = container.get(MemesInteractor)
+    interactor = container.get(IMemesInteractor)  # type: ignore
     memes = await interactor.fetch_list(limit=paginator.limit, offset=paginator.offset)
     image_getter = partial(router.url_path_for, "image")
     return mapper.MemesDomainSchemasMapper.to_response_list(memes, image_getter)
@@ -32,7 +32,7 @@ async def get_meme(
     id: tp.Annotated[uuid.UUID, Path()],  # noqa: A002
     container: tp.Annotated[Container, Depends(get_container)],
 ) -> schemas.MemeResponse:
-    interactor = container.get(MemesInteractor)
+    interactor = container.get(IMemesInteractor)  # type: ignore
     try:
         memes = await interactor.fetch_by_id(meme_id=id)
     except MemeNotFoundError as e:
@@ -47,7 +47,7 @@ async def add(
     image: UploadFile,
     container: tp.Annotated[Container, Depends(get_container)],
 ) -> schemas.MemeCreateResponse:
-    interactor = container.get(MemesInteractor)
+    interactor = container.get(IMemesInteractor)  # type: ignore
     if not image.filename:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Image name is required")
     try:
@@ -66,7 +66,7 @@ async def update(
     image: UploadFile,
     container: tp.Annotated[Container, Depends(get_container)],
 ) -> schemas.MemeUpdateResponse:
-    interactor = container.get(MemesInteractor)
+    interactor = container.get(IMemesInteractor)  # type: ignore
     if not image.filename:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Image name is required")
     try:
@@ -96,7 +96,7 @@ async def delete(
     id: tp.Annotated[uuid.UUID, Path()],  # noqa: A002
     container: tp.Annotated[Container, Depends(get_container)],
 ) -> Response:
-    interactor = container.get(MemesInteractor)
+    interactor = container.get(IMemesInteractor)  # type: ignore
     try:
         await interactor.delete(meme_id=id)
     except MemeNotFoundError as e:

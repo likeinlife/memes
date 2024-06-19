@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 from domain.entities.memes import Meme
 from domain.protocols.c3_gateway import IC3GateWay
+from domain.protocols.memes_interactor import IMemesInteractor
 from infra.db.uow import UnitOfWork
 from infra.repositories.memes.sqla import SQLAMemeRepository
 from logic.usecases import memes
@@ -13,7 +14,7 @@ from .errors import InvalidImageExtensionError
 
 
 @dataclass(frozen=True, eq=False, slots=True)
-class MemesInteractor:
+class MemesInteractor(IMemesInteractor):
     uow: UnitOfWork
     c3_gateway: IC3GateWay
     _allowed_extensions: tp.ClassVar[tuple[str, ...]] = ("jpg", "jpeg", "png")

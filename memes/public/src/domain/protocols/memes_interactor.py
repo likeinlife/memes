@@ -1,0 +1,16 @@
+import typing as tp
+import uuid
+
+from domain.entities.memes import Meme
+
+
+class IMemesInteractor(tp.Protocol):
+    async def add(self, text: str, image: bytes, file_name: str) -> uuid.UUID: ...
+
+    async def fetch_by_id(self, meme_id: uuid.UUID) -> Meme: ...
+
+    async def fetch_list(self, limit: int, offset: int) -> list[Meme]: ...
+
+    async def delete(self, meme_id: uuid.UUID) -> None: ...
+
+    async def update(self, meme_id: uuid.UUID, text: str, image: bytes, file_name: str) -> Meme: ...
