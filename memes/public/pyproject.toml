@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "public"
+version = "0.1.0"
+description = "Public Memes API"
+authors = ["likeinlife <likeinlife@outlook.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.111.0"
+httpx = "^0.27.0"
+pydantic = "^2.7.4"
+pydantic-settings = "^2.3.3"
+dishka = "^1.2.0"
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.10.0"
+ruff = "^0.4.9"
+
+[tool.poetry.group.dev]
+optional = true
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
