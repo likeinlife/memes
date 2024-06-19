@@ -29,11 +29,11 @@ all:
 
 .PHONY: down-app
 down-app:
-	${DC} -f ${APP_FILE} down
+	${DC} -f ${APP_FILE} ${DEV_ENV} down
 
 .PHONY: down-storages
 down-storages:
-	${DC} -f ${STORAGES_FILE} down
+	${DC} -f ${STORAGES_FILE} ${DEV_ENV} down
 
 .PHONY: down-all
 down-all:
