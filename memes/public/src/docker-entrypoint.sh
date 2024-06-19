@@ -1,7 +1,6 @@
 #!/bin/sh
 
 alembic upgrade head
-python presentation/cli/main.py
 
 if [ "$APP_DEBUG" = "True" ]; then
     echo "DEBUG MODE"
