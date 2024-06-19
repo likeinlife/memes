@@ -1,10 +1,10 @@
 import uuid
 from dataclasses import dataclass
 
-from src.domain.errors import BaseError
+from domain.errors import BaseError
 
 
-@dataclass(frozen=True, eq=False)
+@dataclass(eq=False)
 class MemeNotFoundError(BaseError):
     meme_id: uuid.UUID
 

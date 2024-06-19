@@ -4,10 +4,10 @@ import sqlalchemy as sa
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from domain.entities.memes import Meme
-from src.domain.protocols.errors import MemeNotFoundError
-from src.domain.protocols.meme_repository import IMemeRepository
-from src.infra.db.models import MemeORM
-from src.infra.mappers.meme.orm_mapper import MemeORMDomainMapper
+from domain.protocols.errors import MemeNotFoundError
+from domain.protocols.meme_repository import IMemeRepository
+from infra.db.models import MemeORM
+from infra.mappers.meme.orm_mapper import MemeORMDomainMapper
 
 
 class SQLAMemeRepository(IMemeRepository):

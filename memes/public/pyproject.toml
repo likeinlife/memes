@@ -16,6 +16,7 @@ validators = "^0.28.3"
 sqlalchemy = "^2.0.31"
 structlog = "^24.2.0"
 alembic = "^1.13.1"
+asyncpg = "^0.29.0"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.10.0"
@@ -60,6 +61,7 @@ ignore = [
     "PGH003",
     # Useless
     "FBT",
+    "B904",
 ]
 exclude = []
 

@@ -30,7 +30,7 @@ class LoggingSettings(BaseSettings):
 
 
 class C3Settings(BaseSettings):
-    model_config = _model_config(env_prefix="FARPOST_")
+    model_config = _model_config(env_prefix="C3_")
 
     upload_url: str = Field(init=False)
 

@@ -1,12 +1,12 @@
 import uuid
 from dataclasses import dataclass
 
-from src.domain.entities.memes import Meme
-from src.domain.protocols.c3_gateway import IC3GateWay
-from src.domain.protocols.meme_repository import IMemeRepository
-from src.domain.values.meme_image_url import MemeImageURL
-from src.domain.values.meme_text import MemeText
-from src.logic.usecases.interface import IUseCase
+from domain.entities.memes import Meme
+from domain.protocols.c3_gateway import IC3GateWay
+from domain.protocols.meme_repository import IMemeRepository
+from domain.values.meme_image_url import MemeImageURL
+from domain.values.meme_text import MemeText
+from logic.usecases.interface import IUseCase
 
 
 @dataclass(frozen=True, eq=False, slots=True)

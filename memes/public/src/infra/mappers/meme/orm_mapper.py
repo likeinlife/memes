@@ -1,7 +1,7 @@
-from src.domain.entities.memes import Meme
-from src.domain.values.meme_image_url import MemeImageURL
-from src.domain.values.meme_text import MemeText
-from src.infra.db.models import MemeORM
+from domain.entities.memes import Meme
+from domain.values.meme_image_url import MemeImageURL
+from domain.values.meme_text import MemeText
+from infra.db.models import MemeORM
 
 
 class MemeORMDomainMapper:

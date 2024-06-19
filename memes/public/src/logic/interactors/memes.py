@@ -3,11 +3,11 @@ import uuid
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
 
-from src.domain.entities.memes import Meme
-from src.domain.protocols.c3_gateway import IC3GateWay
-from src.infra.db.uow import UnitOfWork
-from src.infra.repositories.memes.sqla import SQLAMemeRepository
-from src.logic.usecases import memes
+from domain.entities.memes import Meme
+from domain.protocols.c3_gateway import IC3GateWay
+from infra.db.uow import UnitOfWork
+from infra.repositories.memes.sqla import SQLAMemeRepository
+from logic.usecases import memes
 
 
 @dataclass(frozen=True, eq=False, slots=True)

@@ -1,5 +1,4 @@
 DC = docker compose
-EXEC = docker compose exec -it
 
 DEV_ENV = --env-file dev.env
 PROD_ENV = --env-file prod.env
@@ -9,7 +8,7 @@ STORAGES_FILE = docker-compose/storages.yaml
 
 .PHONY: dev-app
 dev-app:
-	${DC} -f ${APP_FILE} ${DEV_ENV} up --build -d
+	${DC} -f ${APP_FILE} ${DEV_ENV} up --build -d ${DEV_ENV}
 
 .PHONY: app
 app:

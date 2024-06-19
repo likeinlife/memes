@@ -1,8 +1,8 @@
 import uuid
 from dataclasses import dataclass
 
-from src.domain.protocols.meme_repository import IMemeRepository
-from src.logic.usecases.interface import IUseCase
+from domain.protocols.meme_repository import IMemeRepository
+from logic.usecases.interface import IUseCase
 
 
 @dataclass(frozen=True, eq=False, slots=True)
