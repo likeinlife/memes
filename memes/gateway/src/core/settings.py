@@ -21,6 +21,7 @@ class C3Settings(BaseSettings):
     encode_secret_key: bytes = Field(init=False)
     bucket_name: str = Field(init=False)
     url: str = Field(init=False)
+    secure: bool = Field(default=False, init=False)
 
 
 class AppSettings(BaseSettings):

@@ -17,6 +17,7 @@ class InfraProvider(Provider):
             settings.c3.url,
             settings.c3.access_key,
             settings.c3.secret_key,
+            settings.c3.secure,
         )
 
     @provide
