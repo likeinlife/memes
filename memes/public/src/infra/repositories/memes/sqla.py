@@ -15,14 +15,14 @@ class SQLAMemeRepository(IMemeRepository):
         self.session = session
 
     async def fetch_by_id(self, meme_id: uuid.UUID) -> Meme:
-        query = sa.select(MemeORM).where(MemeORM.id == meme_id)
+        query = sa.select(MemeORM).where(MemeORM.id == meme_id).where(MemeORM.deleted == False)  # noqa: E712
         result = (await self.session.execute(query)).scalar_one_or_none()
         if result is None:
             raise MemeNotFoundError(meme_id=meme_id)
         return MemeORMDomainMapper.from_orm(result)
 
     async def fetch_list(self, limit: int, offset: int) -> list[Meme]:
-        query = sa.select(MemeORM).limit(limit).offset(offset)
+        query = sa.select(MemeORM).limit(limit).offset(offset).where(MemeORM.deleted == False)  # noqa: E712
         result = (await self.session.execute(query)).scalars().all()
         return [MemeORMDomainMapper.from_orm(res) for res in result]
 
@@ -34,7 +34,7 @@ class SQLAMemeRepository(IMemeRepository):
         return orm.id
 
     async def update(self, meme_id: uuid.UUID, image_name: str, text: str) -> Meme:
-        query = sa.select(MemeORM).where(MemeORM.id == meme_id)
+        query = sa.select(MemeORM).where(MemeORM.id == meme_id).where(MemeORM.deleted == False)  # noqa: E712
         found_meme = (await self.session.execute(query)).scalar_one_or_none()
         if not found_meme:
             raise MemeNotFoundError(meme_id=meme_id)

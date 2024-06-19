@@ -101,7 +101,7 @@ async def delete(
         await interactor.delete(meme_id=id)
     except MemeNotFoundError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.message)
-    return Response(status.HTTP_204_NO_CONTENT)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @router.get("/image/{image_name}/")
