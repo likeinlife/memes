@@ -8,19 +8,12 @@ services:
     networks:
       - backend
     environment:
-      MINIO_ENDPOINT: ${MINIO_ENDPOINT:?}
-      MINIO_USER: ${MINIO_USER:?}
-      MINIO_PASSWORD: ${MINIO_PASSWORD:?}
-      MINIO_BUCKET_NAME: ${MINIO_BUCKET_NAME:?}
       DB_USER: ${DB_USER:?}
       DB_PASSWORD: ${DB_PASSWORD:?}
       DB_DB_NAME: ${DB_DB_NAME:?}
-      C3_PORT: ${C3_PORT:?}
-      C3_UPLOAD_URL: ${C3_UPLOAD_URL:?}
       DB_PORT: ${DB_PORT:?}
       DB_HOST: ${DB_HOST:?}
-      MINIO_ENCRYPT_SECREY_KEY: ${MINIO_ENCRYPT_SECREY_KEY:?}
-      GATEWAY_PORT: ${GATEWAY_PORT:?}
+      C3_UPLOAD_URL: ${C3_UPLOAD_URL:?}
       APP_NAME: ${APP_NAME:?}
       APP_VERSION: ${APP_VERSION:?}
       APP_DEBUG: ${APP_DEBUG:?}
@@ -31,6 +24,14 @@ services:
       - "${GATEWAY_PORT}:8000"
     volumes:
       - ../memes/gateway/src:/opt/app
+    environment:
+      C3_URL: ${C3_URL:?}
+      C3_ACCESS_KEY: ${C3_ACCESS_KEY:?}
+      C3_SECRET_KEY: ${C3_SECRET_KEY:?}
+      C3_BUCKET_NAME: ${C3_BUCKET_NAME:?}
+      APP_NAME: ${APP_NAME:?}
+      APP_VERSION: ${APP_VERSION:?}
+      APP_DEBUG: ${APP_DEBUG:?}
     networks:
       - backend
 
