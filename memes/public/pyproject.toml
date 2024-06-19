@@ -13,6 +13,7 @@ pydantic = "^2.7.4"
 pydantic-settings = "^2.3.3"
 dishka = "^1.2.0"
 validators = "^0.28.3"
+sqlalchemy = "^2.0.31"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.10.0"
