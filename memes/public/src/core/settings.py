@@ -30,9 +30,9 @@ class LoggingSettings(BaseSettings):
 
 
 class C3Settings(BaseSettings):
-    model_config = _model_config(env_prefix="C3_")
+    model_config = _model_config(env_prefix="GATEWAY_")
 
-    upload_url: str = Field(init=False)
+    url: str = Field(init=False)
 
 
 class AppSettings(BaseSettings):

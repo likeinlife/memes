@@ -25,4 +25,4 @@ class InfraProvider(Provider):
 
     @provide
     def _c3(self) -> IC3GateWay:
-        return HTTPC3Gateway(settings.c3.upload_url)
+        return HTTPC3Gateway(settings.c3.url)

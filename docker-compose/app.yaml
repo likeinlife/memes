@@ -11,7 +11,7 @@ services:
       DB_DB_NAME: ${DB_DB_NAME:?}
       DB_PORT: ${DB_PORT:?}
       DB_HOST: ${DB_HOST:?}
-      C3_UPLOAD_URL: ${C3_UPLOAD_URL:?}
+      GATEWAY_URL: ${GATEWAY_URL:?}
       APP_NAME: ${APP_NAME:?}
       APP_VERSION: ${APP_VERSION:?}
       APP_DEBUG: ${APP_DEBUG:?}

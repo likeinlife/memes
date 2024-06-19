@@ -10,3 +10,12 @@ class C3ImageUploadError(C3GateWayError):
     @property
     def message(self) -> str:
         return f"Error uploading image {self.filename}"
+
+
+@dataclass(eq=False)
+class C3ImageDownloadError(C3GateWayError):
+    filename: str
+
+    @property
+    def message(self) -> str:
+        return f"Error downloading image {self.filename}"

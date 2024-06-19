@@ -6,6 +6,7 @@ from dishka import Container
 from fastapi import APIRouter, Depends, HTTPException, Path, Response, UploadFile, status
 
 from container import get_container
+from domain.protocols.c3_gateway import IC3GateWay
 from domain.protocols.errors import C3GateWayError, MemeNotFoundError
 from logic.interactors.errors import InvalidImageExtensionError
 from logic.interactors.memes import MemesInteractor
@@ -105,7 +106,12 @@ async def delete(
 
 @router.get("/image/{image_name}/")
 async def image(
-    image_name: tp.Annotated[str, Path()],  # noqa: ARG001
-    container: tp.Annotated[Container, Depends(get_container)],  # noqa: ARG001
+    image_name: tp.Annotated[str, Path()],
+    container: tp.Annotated[Container, Depends(get_container)],
 ) -> Response:
-    return Response(content="Not implemented", status_code=status.HTTP_501_NOT_IMPLEMENTED)
+    gateway_service = container.get(IC3GateWay)  # type: ignore
+    try:
+        content = await gateway_service.download_image(filename=image_name)
+    except C3GateWayError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.message)
+    return Response(content=content, media_type="image/png")
