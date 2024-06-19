@@ -1,0 +1,22 @@
+services:
+  app:
+    build: ../memes/public
+    ports:
+      - "${PUBLIC_PORT}:8000"
+    volumes:
+      - ../memes/public
+    networks:
+      - backend
+
+  gateway:
+    build: ../memes/gateway
+    ports:
+      - "${GATEWAY_PORT}:8000"
+    volumes:
+      - ../memes/gateway
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
