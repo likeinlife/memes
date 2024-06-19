@@ -41,7 +41,7 @@ async def get_meme(
     return mapper.MemesDomainSchemasMapper.to_response(memes, image_getter)
 
 
-@router.post("/")
+@router.post("/", status_code=status.HTTP_201_CREATED)
 async def add(
     meme: tp.Annotated[schemas.MemeCreateRequest, Depends()],
     image: UploadFile,
