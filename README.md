@@ -13,6 +13,10 @@
 3. `make down-all` - закрыть приложения
 4. `make down-storages-v` - удалить volume хранилищ
 
+# Swagger
+
+Swagger доступен по адресу `http://localhost:8000/api/docs`
+
 # Тестирование
 
 1. `cd memes/public` - перейти в тестируемую директорию
