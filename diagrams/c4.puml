@@ -1,0 +1,25 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!define SPRITES https://raw.githubusercontent.com/rabelenda/cicon-plantuml-sprites/v1.0/sprites
+!include SPRITES/postgresql.puml
+!include SPRITES/mi.puml
+!include https://gist.githubusercontent.com/likeinlife/3f34e230e0240514fa28bcc1fce1c5b1/raw/457d818dda3ed5e89b491b53cc79fca67579b8a6/gistfile1.txt
+
+skinparam linetype polyline
+skinparam linetype ortho
+
+HIDE_STEREOTYPE()
+
+Person(user, "User")
+
+Container(meme_api, "Meme API", "FastApi")
+Container(c3_api, "C3 API", "FastAPI")
+
+ContainerDb(db, "Meme DB", "PostgreSQL", $sprite="postgresql")
+ContainerDb(c3, "C3", "MinIO", $sprite="mi")
+
+Rel(user, meme_api, "")
+Rel(meme_api, c3_api, "")
+Rel(meme_api, db, "")
+Rel(c3_api, c3, "")
+@enduml

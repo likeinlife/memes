@@ -6,6 +6,10 @@
 
 Картинки сохраняются в S3 хранилище.
 
+# Диаграмма
+
+![](./diagrams/out/c4.png)
+
 # Запуск
 
 1. `make dev-storages` - запустить PostgreSQL, MinIO
