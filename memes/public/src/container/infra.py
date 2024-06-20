@@ -19,7 +19,7 @@ class InfraProvider(Provider):
     def _sessionmaker(self, engine: sa_async.AsyncEngine) -> sa_async.async_sessionmaker:
         return create_session_maker(engine)
 
-    @provide
+    @provide(scope=Scope.REQUEST)
     def _uow(self, session_maker: sa_async.async_sessionmaker) -> UnitOfWork:
         return UnitOfWork(session_maker)
 

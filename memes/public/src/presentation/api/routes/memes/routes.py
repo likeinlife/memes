@@ -21,8 +21,9 @@ async def get_memes(
     paginator: tp.Annotated[schemas.Paginator, Depends()],
     container: tp.Annotated[Container, Depends(get_container)],
 ) -> schemas.MemeListResponse:
-    interactor = container.get(IMemesInteractor)  # type: ignore
-    memes = await interactor.fetch_list(limit=paginator.limit, offset=paginator.offset)
+    with container() as req:
+        interactor = req.get(IMemesInteractor)  # type: ignore
+        memes = await interactor.fetch_list(limit=paginator.limit, offset=paginator.offset)
     image_getter = partial(router.url_path_for, "image")
     return mapper.MemesDomainSchemasMapper.to_response_list(memes, image_getter)
 
@@ -32,11 +33,12 @@ async def get_meme(
     id: tp.Annotated[uuid.UUID, Path()],  # noqa: A002
     container: tp.Annotated[Container, Depends(get_container)],
 ) -> schemas.MemeResponse:
-    interactor = container.get(IMemesInteractor)  # type: ignore
-    try:
-        memes = await interactor.fetch_by_id(meme_id=id)
-    except MemeNotFoundError as e:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.message)
+    with container() as req:
+        interactor = req.get(IMemesInteractor)  # type: ignore
+        try:
+            memes = await interactor.fetch_by_id(meme_id=id)
+        except MemeNotFoundError as e:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.message)
     image_getter = partial(router.url_path_for, "image")
     return mapper.MemesDomainSchemasMapper.to_response(memes, image_getter)
 
@@ -47,15 +49,16 @@ async def add(
     image: UploadFile,
     container: tp.Annotated[Container, Depends(get_container)],
 ) -> schemas.MemeCreateResponse:
-    interactor = container.get(IMemesInteractor)  # type: ignore
     if not image.filename:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Image name is required")
-    try:
-        created = await interactor.add(text=meme.text, image=await image.read(), file_name=image.filename)
-    except InvalidImageExtensionError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=e.message)
-    except C3GateWayError as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=e.message)
+    with container() as req:
+        interactor = req.get(IMemesInteractor)  # type: ignore
+        try:
+            created = await interactor.add(text=meme.text, image=await image.read(), file_name=image.filename)
+        except InvalidImageExtensionError as e:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=e.message)
+        except C3GateWayError as e:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=e.message)
     return schemas.MemeCreateResponse(meme_id=created)
 
 
@@ -65,30 +68,27 @@ async def update(
     meme: tp.Annotated[schemas.MemeUpdateRequest, Depends()],
     image: UploadFile,
     container: tp.Annotated[Container, Depends(get_container)],
-) -> schemas.MemeUpdateResponse:
-    interactor = container.get(IMemesInteractor)  # type: ignore
+) -> schemas.MemeResponse:
     if not image.filename:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Image name is required")
-    try:
-        created = await interactor.update(
-            meme_id=id,
-            text=meme.text,
-            image=await image.read(),
-            file_name=image.filename,
-        )
-    except MemeNotFoundError as e:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.message)
-    except InvalidImageExtensionError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=e.message)
-    except C3GateWayError as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=e.message)
+    with container() as req:
+        interactor = req.get(IMemesInteractor)  # type: ignore
+        try:
+            created = await interactor.update(
+                meme_id=id,
+                text=meme.text,
+                image=await image.read(),
+                file_name=image.filename,
+            )
+        except MemeNotFoundError as e:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.message)
+        except InvalidImageExtensionError as e:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=e.message)
+        except C3GateWayError as e:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=e.message)
 
-    return schemas.MemeUpdateResponse(
-        id=created.id,
-        image_url=created.image_name,
-        text=created.text.as_generic_type(),
-        created_at=created.created_at,
-    )
+    image_getter = partial(router.url_path_for, "image")
+    return mapper.MemesDomainSchemasMapper.to_response(created, image_getter)
 
 
 @router.delete("/{id}/")
@@ -96,11 +96,12 @@ async def delete(
     id: tp.Annotated[uuid.UUID, Path()],  # noqa: A002
     container: tp.Annotated[Container, Depends(get_container)],
 ) -> Response:
-    interactor = container.get(IMemesInteractor)  # type: ignore
-    try:
-        await interactor.delete(meme_id=id)
-    except MemeNotFoundError as e:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.message)
+    with container() as req:
+        interactor = req.get(IMemesInteractor)  # type: ignore
+        try:
+            await interactor.delete(meme_id=id)
+        except MemeNotFoundError as e:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.message)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
@@ -109,9 +110,10 @@ async def image(
     image_name: tp.Annotated[str, Path()],
     container: tp.Annotated[Container, Depends(get_container)],
 ) -> Response:
-    gateway_service = container.get(IC3GateWay)  # type: ignore
-    try:
-        content = await gateway_service.download_image(filename=image_name)
-    except C3GateWayError as e:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.message)
+    with container() as req:
+        gateway_service = req.get(IC3GateWay)  # type: ignore
+        try:
+            content = await gateway_service.download_image(filename=image_name)
+        except C3GateWayError as e:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.message)
     return Response(content=content, media_type="image/png")

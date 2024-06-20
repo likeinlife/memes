@@ -9,6 +9,6 @@ from logic.interactors.memes import MemesInteractor
 class LogicProvider(Provider):
     scope = Scope.APP
 
-    @provide
+    @provide(scope=Scope.REQUEST)
     def _memes_interactor(self, uow: UnitOfWork, c3_gateway: IC3GateWay) -> IMemesInteractor:
         return MemesInteractor(uow, c3_gateway)
