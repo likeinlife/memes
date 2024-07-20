@@ -1,5 +1,9 @@
 # Description
 
+[![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/likeinlife/memes?label=version)](https://github.com/likeinlife/memes/releases)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+<a href="http://mypy-lang.org/" target="_blank"><img src="https://img.shields.io/badge/mypy-checked-1F5082.svg" alt="Mypy checked"></a>
+
 АПИ для загрузки/получения/редактирования мемов.
 
 Мем состоит из текста и картинки.
